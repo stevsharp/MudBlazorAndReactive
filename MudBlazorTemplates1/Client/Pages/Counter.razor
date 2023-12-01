@@ -1,0 +1,39 @@
+﻿@page "/counter"
+@using MudBlazorTemplates1.Client.StateStores
+
+<PageTitle>Counter</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Counter</MudText>
+<MudText Class="mb-4">Current count: @currentCount</MudText>
+<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="IncrementCount">Click me</MudButton>
+
+
+@code {
+
+    @inject CounterStateStore counterStateStore;
+
+    private int currentCount = 0;
+
+    private IDisposable? subscription;
+
+    protected override void OnInitialized()
+    {
+        this.subscription = this.counterStateStore.Value
+          .Subscribe((state) =>
+          {
+              currentCount = state.counter;
+              Console.WriteLine("On Inititalize");
+          });
+    }
+    private void IncrementCount()
+    {
+        counterStateStore.Increment();
+        Console.WriteLine("On Increment");
+    }
+
+    public void Dispose()
+    {
+        subscription?.Dispose();
+    }
+
+}
